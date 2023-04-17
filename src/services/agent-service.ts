@@ -1,5 +1,6 @@
 import {
   createModel,
+  executeAnalyzeAgent,
   executeCreateTaskAgent,
   executeTaskAgent,
   extractArray,
@@ -42,6 +43,19 @@ export async function executeAgent(
   task: string
 ) {
   const completion = await executeTaskAgent(
+    createModel(modelSettings),
+    goal,
+    task
+  );
+  return completion.text as string;
+}
+
+export async function analyzeAgent(
+  modelSettings: ModelSettings,
+  goal: string,
+  task: string
+) {
+  const completion = await executeAnalyzeAgent(
     createModel(modelSettings),
     goal,
     task

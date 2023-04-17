@@ -35,6 +35,7 @@ class AutonomousAgent {
   }
 
   async run() {
+    console.log(await this.analyzeTask("Find the meaning of life"));
     this.sendGoalMessage();
     this.sendThinkingMessage();
 
@@ -162,6 +163,16 @@ class AutonomousAgent {
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument,@typescript-eslint/no-unsafe-member-access
     return res.data.newTasks as string[];
+  }
+
+  async analyzeTask(task: string): Promise<string> {
+    const res = await axios.post(`/api/analyze`, {
+      modelSettings: this.modelSettings,
+      goal: this.goal,
+      task: task,
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument
+    return res.data.response as string;
   }
 
   async executeTask(task: string): Promise<string> {

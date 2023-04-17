@@ -13,7 +13,7 @@ export const createModel = (settings: ModelSettings) =>
     temperature: settings.customTemperature || 0.9,
     modelName:
       settings.customModelName === "" ? GPT_35_TURBO : settings.customModelName,
-    maxTokens: 750,
+    maxTokens: 600,
   });
 
 const startGoalPrompt = new PromptTemplate({
@@ -27,6 +27,24 @@ export const startGoalAgent = async (model: OpenAI, goal: string) => {
     prompt: startGoalPrompt,
   }).call({
     goal,
+  });
+};
+
+const analyzePrompt = new PromptTemplate({
+  template:
+    "Play the role of an agent who must decide what action to take. You have the following objective of `{goal}`, and the following task `{task}`. You must use a value from the possible list of actions: `{actions}`. Provide reasoning, only return a JSON response of the form ( thought: String, action: String, data: String ) that can be parsed by JSON.parse() and NOTHING ELSE",
+  inputVariables: ["goal", "task", "actions"],
+});
+export const executeAnalyzeAgent = async (
+  model: OpenAI,
+  goal: string,
+  task: string
+) => {
+  const actions = ["google", "respond"];
+  return await new LLMChain({ llm: model, prompt: analyzePrompt }).call({
+    goal,
+    task,
+    actions,
   });
 };
 
